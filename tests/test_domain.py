@@ -1,4 +1,4 @@
-from workflow_domain import *
+from workflow_domain import State, Workflow
 
 
 def test_workflow():
