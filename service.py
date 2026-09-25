@@ -1,6 +1,9 @@
-from fastapi import FastAPI, HTTPException
+import time
+import uuid
+
+from fastapi import FastAPI, HTTPException, Request as FastAPIRequest
 from opentelemetry import trace
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from observability import configure_observability, get_logger
 from workflow_domain import Workflow
@@ -9,12 +12,13 @@ configure_observability()
 logger = get_logger(__name__)
 
 app = FastAPI(title="ai-workflow-engine", version="1.0.0")
+app.add_middleware(ObservabilityHeadersMiddleware)  # type: ignore[name-defined]
 tracer = trace.get_tracer("ai-workflow-engine")
 
 
-class WorkflowRequest(BaseModel):
+class Request(BaseModel):
     key: str
-    payload: dict = {}
+    payload: dict = Field(default_factory=dict)
 
 
 @app.get("/health/live")
@@ -28,14 +32,10 @@ def ready():
 
 
 @app.post("/v1/workflows")
-def handle(request: WorkflowRequest):
-    with tracer.start_as_current_span("workflow.start") as span:
-        span.set_attribute("workflow.key", request.key)
+def handle(request: Request):
+    with tracer.start_as_current_span("ai-workflow-engine.domain"):
         try:
-            workflow = Workflow(list(request.payload.get("steps", [])))
-            workflow.start()
-            logger.info("workflow_started key=%s steps=%d", request.key, len(workflow.steps))
-            return {"state": workflow.state, "steps": workflow.steps}
-        except (ValueError, KeyError, RuntimeError) as exc:
-            logger.warning("workflow_rejected key=%s reason=%s", request.key, exc)
+            workflow = Workflow.create(request.key, request.payload)
+            return {"workflow_id": workflow.workflow_id, "status": "accepted"}
+        except (ValueError, KeyError, TypeError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
