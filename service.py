@@ -1,7 +1,8 @@
 import time
 import uuid
 
-from fastapi import FastAPI, HTTPException, Request as FastAPIRequest
+from fastapi import FastAPI, HTTPException
+from fastapi import Request as FastAPIRequest
 from opentelemetry import trace
 from pydantic import BaseModel, Field
 
