@@ -1,6 +1,7 @@
 """Dependency-free resilience primitives for service boundaries."""
 
 from __future__ import annotations
+
 import random
 import threading
 import time
