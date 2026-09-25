@@ -1,3 +1,9 @@
 from workflow_domain import *
+
+
 def test_workflow():
- w=Workflow(["a","b"]);w.start();w.complete_step("a");w.complete_step("b");assert w.state==State.SUCCEEDED
+    w = Workflow(["a", "b"])
+    w.start()
+    w.complete_step("a")
+    w.complete_step("b")
+    assert w.state == State.SUCCEEDED

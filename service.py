@@ -33,7 +33,9 @@ def handle(request: WorkflowRequest):
         try:
             workflow = Workflow(list(request.payload.get("steps", [])))
             workflow.start()
-            logger.info("workflow_started key=%s steps=%d", request.key, len(workflow.steps))
+            logger.info(
+                "workflow_started key=%s steps=%d", request.key, len(workflow.steps)
+            )
             return {"state": workflow.state, "steps": workflow.steps}
         except (ValueError, KeyError, RuntimeError) as exc:
             logger.warning("workflow_rejected key=%s reason=%s", request.key, exc)
