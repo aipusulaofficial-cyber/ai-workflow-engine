@@ -1,5 +1,6 @@
-from workflow_engine import *
 import pytest
+
+from workflow_engine import Task, Workflow, WorkflowError
 
 
 def test_dag_order_and_retry():
