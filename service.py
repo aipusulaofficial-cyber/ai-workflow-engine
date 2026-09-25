@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 from opentelemetry import trace
+from pydantic import BaseModel
 from observability import configure_observability, get_logger
 from workflow_domain import Workflow
 
