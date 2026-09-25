@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: ai-workflow-engine}
+spec:
+ replicas: 2
+ selector: {matchLabels: {app: ai-workflow-engine}}
+ template:
+  metadata: {labels: {app: ai-workflow-engine}}
+  spec:
+   containers:
+   - name: api
+     image: ai-workflow-engine:latest
+     ports: [{containerPort: 8000}]
+     readinessProbe: {httpGet: {path: /health/ready, port: 8000}}
+     livenessProbe: {httpGet: {path: /health/live, port: 8000}}
