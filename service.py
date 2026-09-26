@@ -21,7 +21,7 @@ class WorkflowPayload(BaseModel):
 
 
 class WorkflowRequest(BaseModel):
-    key: str = Field(min_length=1, max_length=128)
+    key: str = Field(min_length=1, max_length=128, pattern=r".*\S.*")
     payload: WorkflowPayload
 
 
