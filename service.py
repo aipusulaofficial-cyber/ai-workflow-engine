@@ -16,9 +16,13 @@ app = FastAPI(title="ai-workflow-engine", version="1.0.0")
 tracer = trace.get_tracer("ai-workflow-engine")
 
 
+class WorkflowPayload(BaseModel):
+    steps: list[str] = Field(min_length=1, max_length=1_000)
+
+
 class WorkflowRequest(BaseModel):
-    key: str
-    payload: dict = Field(default_factory=dict)
+    key: str = Field(min_length=1, max_length=128)
+    payload: WorkflowPayload
 
 
 @app.middleware("http")
@@ -34,24 +38,28 @@ async def observability_headers(request: FastAPIRequest, call_next):
 
 
 @app.get("/health/live")
-def live():
+def live() -> dict[str, str]:
     return {"status": "ok"}
 
 
 @app.get("/health/ready")
-def ready():
+def ready() -> dict[str, str]:
     return {"status": "ready"}
 
 
 @app.post("/v1/workflows")
-def handle(request: WorkflowRequest):
+def handle(request: WorkflowRequest) -> dict[str, object]:
     with tracer.start_as_current_span("workflow.start") as span:
         span.set_attribute("workflow.key", request.key)
         try:
-            workflow = Workflow(list(request.payload.get("steps", [])))
+            workflow = Workflow(request.payload.steps)
             workflow.start()
-            logger.info("workflow_started key=%s steps=%d", request.key, len(workflow.steps))
+            logger.info(
+                "workflow_started key=%s steps=%d",
+                request.key,
+                len(workflow.steps),
+            )
             return {"state": workflow.state, "steps": workflow.steps}
-        except (ValueError, KeyError, RuntimeError) as exc:
+        except (ValueError, RuntimeError) as exc:
             logger.warning("workflow_rejected key=%s reason=%s", request.key, exc)
             raise HTTPException(status_code=400, detail=str(exc)) from exc
