@@ -1,29 +1,28 @@
 # AI Workflow Engine
 
-**Principal-level reference implementation** focused on workflow state, deterministic orchestration, retries, failure isolation, and observable execution.
+A workflow execution engine for deterministic state transitions, controlled retries, failure isolation and observable job execution.
 
-## Engineering intent
-- Clear domain boundaries and replaceable infrastructure adapters
-- Explicit contracts, validation, and failure semantics
-- Deterministic tests with external dependencies isolated
-- Operational readiness through health checks, CI, and security validation
-- Architecture decisions documented so trade-offs are reviewable
+## Execution model
+```text
+workflow definition -> validation -> state transition -> task execution -> retry/failure policy -> terminal state + evidence
+```
 
-## System design
-The repository is structured around explicit responsibilities rather than framework-driven coupling. Domain policy, orchestration, infrastructure adapters, and operational concerns remain separable so components can evolve independently.
+## Core contracts
+- Workflow definitions are validated before execution.
+- State transitions are explicit and testable.
+- Retry behavior is bounded and policy-driven.
+- Failures are isolated to the appropriate execution boundary.
+- Execution context is available for operational diagnosis.
 
-## Quality bar
-- **Correctness:** contract, edge-case, and failure-path tests
-- **Reliability:** bounded work, explicit failure behavior, and health signals where applicable
-- **Security:** least-privilege boundaries, input validation, and safe defaults
-- **Observability:** correlation/context propagation and actionable operational signals
-- **Delivery:** reproducible CI validation before changes are considered complete
+Orchestration policy is separated from infrastructure adapters so task implementations can change independently.
 
-## Principal engineering contract
-See [docs/PRINCIPAL-ENGINEERING.md](docs/PRINCIPAL-ENGINEERING.md) for the reviewable engineering contract, NFRs, and change-safety checklist.
+## Reliability
+Timeouts, retries and failure states are part of the execution contract. A failed task cannot silently become a successful workflow outcome.
 
-## Architecture & decisions
-See [ARCHITECTURE.md](ARCHITECTURE.md) and the ADRs directory for system boundaries, key trade-offs, and extension points.
+## Verification
+CI covers contract and failure paths, with security and production validation as delivery gates.
 
-## Engineering principle
-The goal is to make important behavior **explicit, testable, observable, auditable, and replaceable** without adding complexity that does not buy a measurable engineering property.
+## Evidence
+[ARCHITECTURE.md](ARCHITECTURE.md) · [docs/PRINCIPAL-ENGINEERING.md](docs/PRINCIPAL-ENGINEERING.md) · [ADRs](ADRs/)
+
+**Engineering chain:** Code → Contract → Test → Security → Runtime → Observability → Deployment → Evidence.
