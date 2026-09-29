@@ -37,6 +37,8 @@ class DurableWorkflowStore:
                 )
             else:
                 current = State(row[0])
+                if not self._ALLOWED[current]:
+                    raise ValueError(f"terminal workflow state cannot be modified: {current}")
                 if target != current and target not in self._ALLOWED[current]:
                     raise ValueError(f"invalid workflow transition {current}->{target}")
                 db.execute(
