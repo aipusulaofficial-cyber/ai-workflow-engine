@@ -15,7 +15,10 @@ class WorkflowError(Exception):
 
 class Workflow:
     def __init__(self, tasks):
-        self.tasks = {t.name: t for t in tasks}
+        task_list = list(tasks)
+        if len({task.name for task in task_list}) != len(task_list):
+            raise WorkflowError("duplicate task name")
+        self.tasks = {task.name: task for task in task_list}
         self.done = set()
 
     def validate(self):
@@ -27,15 +30,15 @@ class Workflow:
         return True
 
     def run(self, handlers, retries=1):
+        if isinstance(retries, bool) or not isinstance(retries, int) or retries < 0:
+            raise ValueError("retries must be a non-negative integer")
         self.validate()
-        pending = set(self.tasks)
+        pending = set(self.tasks) - self.done
         while pending:
             ready = [n for n in pending if set(self.tasks[n].deps) <= self.done]
             if not ready:
                 raise WorkflowError("dependency cycle")
             for n in sorted(ready):
-                if n in self.done:
-                    continue
                 err = None
                 for _ in range(retries + 1):
                     try:
@@ -48,4 +51,4 @@ class Workflow:
                     raise WorkflowError(f"task failed: {n}") from err
                 self.done.add(n)
                 pending.remove(n)
-        return list(self.done)
+        return sorted(self.done)
