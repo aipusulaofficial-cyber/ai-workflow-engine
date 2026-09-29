@@ -27,9 +27,7 @@ class DurableWorkflowStore:
             raise ValueError("workflow id is required")
         target = State(state)
         with sqlite3.connect(self.path, isolation_level="IMMEDIATE") as db:
-            row = db.execute(
-                "SELECT state FROM workflows WHERE id=?", (workflow_id,)
-            ).fetchone()
+            row = db.execute("SELECT state FROM workflows WHERE id=?", (workflow_id,)).fetchone()
             if row is None:
                 if target != State.PENDING:
                     raise ValueError("new workflow must start pending")
