@@ -16,6 +16,8 @@ spec:
         runAsNonRoot: true
         runAsUser: 10001
         runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: api
           image: ai-workflow-engine:0.1.0
@@ -24,6 +26,9 @@ spec:
             - containerPort: 8000
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
             capabilities:
               drop: ["ALL"]
           resources:
