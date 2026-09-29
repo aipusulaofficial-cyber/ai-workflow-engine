@@ -26,3 +26,6 @@ CI covers contract and failure paths, with security and production validation as
 [ARCHITECTURE.md](ARCHITECTURE.md) · [docs/PRINCIPAL-ENGINEERING.md](docs/PRINCIPAL-ENGINEERING.md) · [ADRs](ADRs/)
 
 **Engineering chain:** Code → Contract → Test → Security → Runtime → Observability → Deployment → Evidence.
+
+## Portfolio evidence
+[Portfolio evidence map](docs/PORTFOLIO_EVIDENCE.md) — executable proof, architecture mapping and reviewable CI evidence.
