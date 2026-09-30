@@ -1,5 +1,10 @@
 # AI Workflow Engine
 
+[![CI](https://github.com/aipusulaofficial-cyber/ai-workflow-engine/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aipusulaofficial-cyber/ai-workflow-engine/actions/workflows/ci.yml)
+[![Production Tests](https://github.com/aipusulaofficial-cyber/ai-workflow-engine/actions/workflows/production-tests.yml/badge.svg?branch=main)](https://github.com/aipusulaofficial-cyber/ai-workflow-engine/actions/workflows/production-tests.yml)
+[![Security / SBOM](https://github.com/aipusulaofficial-cyber/ai-workflow-engine/actions/workflows/security-sbom.yml/badge.svg?branch=main)](https://github.com/aipusulaofficial-cyber/ai-workflow-engine/actions/workflows/security-sbom.yml)
+
+
 A workflow execution engine for deterministic state transitions, controlled retries, failure isolation and observable job execution.
 
 ## Execution model
